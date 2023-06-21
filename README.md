@@ -22,6 +22,7 @@ Check also my other github scripting repos for [POWERSHELL](https://github.com/s
   - **BASH-menu_NMAP.sh** te ofrece un menu para diferentes escaneos, tambien comprueba y remedia si no tienes nmap instalado
   - **BASH-mysql-daily-backup.md** hace un dump de una base de datos nombrandole con la fecha y otro script borra ficheros de mas de 15 días en un directorio dado
   - **BASH-portscan.sh** escanea puertos abiertos en base a una IP
+  - **BASH-purgar_antiguos.sh** purga ficheros antiguos con patrones dados
 
 
 ## Contact

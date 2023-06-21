@@ -1,6 +1,3 @@
-#@Sergio Alegre a Mayo de 2023
-#Este script busca en el path dado como parametro de manera recursiva, archivos de video de menos de 500px de altura
-
 greenColour="\e[0;32m\033[1m"
 endColour="\033[0m\e[0m"
 redColour="\e[0;31m\033[1m"
@@ -22,16 +19,20 @@ function path(){
     cd $path_escanear #nos posicionamos en dicho path
 
     #guardo en el array lista todos los ficheros de video encontrados en ese path
-    readarray -d '' lista < <(find -type f \( -name "*mp4" -o -name "*mkv" -o -name "*ogg" -o -name "*.mpg" -o -name "*.mpeg" -o -name "*.avi" -o -name "*.flv" -o -name "*.AVI" -o -name "*.divx" -o -name "*.m4v" -o -name "*.ogm" \) -pri$
+    readarray -d '' lista < <(find -type f \( -name "*mp4" -o -name "*mkv" -o -name "*ogg" -o -name "*.mpg" -o -name "*.mpeg" -o -name "*.avi" -o -name "*.flv" -o -name "*.AVI" -o -name "*.divx" -o -name "*.m4v" -o -name "*.ogm" \)  -size +1M -print0 | sort -z) 
+
     for f in "${lista[@]}"; do #recorro los ficheros uno a uno
+
         dimensiones=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$f") #devuelve las dimensiones del archivo
         altura_video=$(echo $dimensiones | cut -d 'x' -f 2)
+        tamanioMB=$(du -m "$f" | awk '{print $1}')
+
         if [ "$altura_video" -lt 500 ]; #si no es un video en HD mostrar las dimensiones
         then
-            echo "$f" tiene $dimensiones
-            lista_archivos_pequenios+=("\n$f") #lista de videos pequeños
-        #else
-        #    echo -e "${greenColour}$f tiene $dimensiones${endColour}"
+            echo -e "${redColour}$dimensiones" "$tamanioMB MB" "$f${endColour}"
+            lista_archivos_pequenios+=("\n$dimensiones $tamanioMB MB $f") #lista de videos pequeños, sus dimensiones y tamaño
+        else
+            echo -e "${greenColour}$dimensiones" "$tamanioMB MB" "$f${endColour}"
         fi
     done
 

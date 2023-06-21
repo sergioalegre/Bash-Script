@@ -34,12 +34,13 @@ function path(){
     readarray -d '' lista < <(find -type f \( -name "*mp4" -o -name "*mkv" -o -name "*ogg" -o -name "*.mpg" -o -name "*.mpeg" -o -name "*.avi" -o -name "*.flv" -o -name "*.AVI" -o -name "*.divx" -o -name "*.m4v" -o -name "*.ogm" \) -pri$
     for f in "${lista[@]}"; do #recorro los ficheros uno a uno
         codec=$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$f") #devuelve el codel del archivo
-        if [[ "${codec}" = 'h264' ]] #si no es h264 o h265
+        if [[ "${codec}" = 'h264' && ! "${f}" = *"nocomp"* ]] #si es h264 y no tiene nocomp es el archivo que buscamos
         then
             echo -e ${redColour}$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$f") "   " $(du -h "$f" |cut -f -1) "   " "$f"
             echo -ne "${endColour}"
             lista_corregir+=("\n$f") #lista de videos que hay que trascodificar
-        else #si es h264 o h265
+        else #si no es h264 o tiene nocomp en el nombre
+
             echo -e ${greenColour}$(ffprobe -v error -select_streams v:0 -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$f") "   " $(du -h "$f" |cut -f -1) "   " "$f"
             echo -ne "${endColour}"
         fi
